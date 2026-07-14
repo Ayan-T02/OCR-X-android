@@ -8,7 +8,11 @@ OCR-X is a Kotlin Android application that uses the rear camera to recognize tex
 - On-device OCR using Google ML Kit Text Recognition
 - Smooth live OCR result panel with copy and clear actions
 - OCR result stabilization to reduce fast flickering text updates
+- Session-based OCR capture
+- Saved OCR strings with timestamps
+- Review current and past scan sessions
 - Animated splash screen with branded OCR-X boot sequence
+- Custom OCR-X adaptive launcher icon
 - Animated Material 3 home screen with scan session flow
 - Navigation from home screen to live camera scanner
 - Room database architecture for session and OCR text persistence
@@ -65,7 +69,8 @@ ui/
 3. CameraX opens the rear camera and streams frames for analysis.
 4. ML Kit processes camera frames on-device and extracts text.
 5. The detected text is normalized, stabilized, and displayed in a polished Material 3 result card.
-6. Users can copy or clear the detected text from the camera screen.
+6. Stable OCR strings are automatically saved into the active Room session.
+7. Users can review captured text later with timestamps from the session list.
 
 ## Build Instructions
 
@@ -83,12 +88,10 @@ app/build/outputs/apk/debug/app-debug.apk
 
 ## Current Status
 
-OCR-X currently includes a working real-time OCR camera flow, polished animated screens, and a Room database data layer foundation. Future versions can complete persistent scan history, search, PDF export, and cloud sync.
+OCR-X includes a working real-time OCR camera flow, polished animated screens, session-based local persistence, and review of captured OCR text with timestamps.
 
 ## Future Improvements
 
-- Fully wired persistent session history
-- Session detail screen
 - Search across scanned text
 - PDF and TXT export
 - Multi-language OCR options

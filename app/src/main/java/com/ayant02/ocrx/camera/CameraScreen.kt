@@ -38,7 +38,10 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CameraScreen() {
+fun CameraScreen(
+    sessionTitle: String,
+    onStableTextDetected: (String) -> Unit
+) {
     var detectedText by remember { mutableStateOf("") }
     var candidateText by remember { mutableStateOf("") }
     var candidateCount by remember { mutableStateOf(0) }
@@ -72,11 +75,12 @@ fun CameraScreen() {
 
                             val now = System.currentTimeMillis()
                             val shouldAccept =
-                                candidateCount >= 2 || now - lastAcceptedAt > 1200
+                                candidateCount >= 2 || now - lastAcceptedAt > 1_200
 
                             if (shouldAccept && normalizedText != detectedText) {
                                 detectedText = normalizedText
                                 lastAcceptedAt = now
+                                onStableTextDetected(normalizedText)
                             }
                         }
                     }
@@ -104,12 +108,12 @@ fun CameraScreen() {
                             modifier = Modifier.padding(20.dp)
                         ) {
                             Text(
-                                text = "Live OCR",
+                                text = sessionTitle,
                                 style = MaterialTheme.typography.titleMedium
                             )
 
                             Text(
-                                text = "Real-time ML Kit text recognition",
+                                text = "Real-time OCR capture with timestamps",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -118,7 +122,7 @@ fun CameraScreen() {
 
                             Crossfade(
                                 targetState = detectedText.ifBlank {
-                                    "Point the camera at a document or printed text."
+                                    "Point the rear camera at printed text."
                                 },
                                 label = "ocrText"
                             ) { text ->

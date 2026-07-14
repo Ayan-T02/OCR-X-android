@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,12 +32,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ayant02.ocrx.data.entity.SessionEntity
 import com.ayant02.ocrx.ui.components.PrimaryButton
 import com.ayant02.ocrx.ui.components.TopBar
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
-    onNewSessionClick: (String) -> Unit = {}
+    sessions: List<SessionEntity>,
+    onNewSessionClick: (String) -> Unit = {},
+    onSessionClick: (SessionEntity) -> Unit = {}
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var showContent by remember { mutableStateOf(false) }
@@ -100,30 +107,27 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(40.dp))
 
                     Text(
-                        text = "Recent Sessions",
+                        text = "Sessions",
                         style = MaterialTheme.typography.titleLarge
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    SessionPreviewCard(
-                        title = "College Notes",
-                        subtitle = "Today"
-                    )
+                    if (sessions.isEmpty()) {
+                        EmptySessionCard()
+                    } else {
+                        sessions.forEach { session ->
+                            SessionPreviewCard(
+                                title = session.title,
+                                subtitle = formatDate(session.createdAt),
+                                onClick = {
+                                    onSessionClick(session)
+                                }
+                            )
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    SessionPreviewCard(
-                        title = "Shopping List",
-                        subtitle = "Yesterday"
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    SessionPreviewCard(
-                        title = "Receipts",
-                        subtitle = "2 Days Ago"
-                    )
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    }
                 }
             }
         }
@@ -143,12 +147,46 @@ fun HomeScreen(
 }
 
 @Composable
-private fun SessionPreviewCard(
-    title: String,
-    subtitle: String
-) {
+private fun EmptySessionCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.90f)
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp)
+        ) {
+            Text(
+                text = "No sessions yet",
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Create a session, scan text, and OCR-X will save detected strings with timestamps.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun SessionPreviewCard(
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -171,4 +209,13 @@ private fun SessionPreviewCard(
             )
         }
     }
+}
+
+private fun formatDate(
+    millis: Long
+): String {
+    return SimpleDateFormat(
+        "dd MMM yyyy • hh:mm a",
+        Locale.getDefault()
+    ).format(Date(millis))
 }
