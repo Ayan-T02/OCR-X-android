@@ -1,30 +1,43 @@
 package com.ayant02.ocrx.camera
 
 import android.Manifest
+import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
+
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 
 @Composable
 fun CameraPermission(
     content: @Composable () -> Unit
 ) {
-    var granted by remember {
-        mutableStateOf(false)
+    val context = LocalContext.current
+
+    var hasPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
     }
 
     val launcher =
         rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission()
-        ) {
-            granted = it
+        ) { granted ->
+            hasPermission = granted
         }
 
     LaunchedEffect(Unit) {
-        launcher.launch(Manifest.permission.CAMERA)
+        if (!hasPermission) {
+            launcher.launch(Manifest.permission.CAMERA)
+        }
     }
 
-    if (granted) {
+    if (hasPermission) {
         content()
     }
 }
