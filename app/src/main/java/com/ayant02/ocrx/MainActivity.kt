@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.ayant02.ocrx.ui.theme.OCRXTheme
+import com.ayant02.ocrx.ui.home.HomeScreen
+import com.ayant02.ocrx.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +19,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             OCRXTheme {
-                CameraScreen()
+                AppNavigation()
             }
         }
     }
