@@ -15,14 +15,22 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit
 ) {
+
     Button(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp),
-        shape = MaterialTheme.shapes.large,
-        colors = ButtonDefaults.buttonColors()
+            .height(60.dp),
+        shape = MaterialTheme.shapes.extraLarge,
+        elevation = ButtonDefaults.buttonElevation(8.dp)
     ) {
-        Text(text)
+
+
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleMedium
+        )
+
     }
+
 }

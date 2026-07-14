@@ -12,8 +12,9 @@ import androidx.compose.ui.unit.dp
 fun TopBar() {
 
     Column(
-        modifier = Modifier.padding(24.dp)
+        modifier = Modifier.padding(bottom = 24.dp)
     ) {
+
 
         Text(
             text = "OCR-X",
@@ -21,11 +22,11 @@ fun TopBar() {
         )
 
         Text(
-            text = "Smart Document Scanner",
-            style = MaterialTheme.typography.bodyLarge
+            text = "AI Powered Document Scanner",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
     }
 
 }
-

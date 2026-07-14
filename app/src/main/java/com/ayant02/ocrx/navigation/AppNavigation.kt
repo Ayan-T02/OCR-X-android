@@ -25,25 +25,23 @@ fun AppNavigation() {
         composable(Routes.HOME) {
 
             HomeScreen(
-
                 onNewSessionClick = { sessionName ->
 
-                    // Room integration comes next
                     println("Session: $sessionName")
 
-                    navController.navigate(
-                        Routes.CAMERA
-                    )
+                    navController.navigate(Routes.CAMERA)
 
                 }
-
             )
-            composable(Routes.CAMERA) {
-
-                CameraScreen()
-
-            }
 
         }
 
-    }}
+        composable(Routes.CAMERA) {
+
+            CameraScreen()
+
+        }
+
+    }
+
+}
