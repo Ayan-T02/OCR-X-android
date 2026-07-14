@@ -1,6 +1,7 @@
 package com.ayant02.ocrx.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
@@ -12,13 +13,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -30,15 +38,16 @@ import com.ayant02.ocrx.ui.components.TopBar
 fun HomeScreen(
     onNewSessionClick: (String) -> Unit = {}
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+    var showContent by remember { mutableStateOf(false) }
 
-    var showDialog by remember {
-        mutableStateOf(false)
+    LaunchedEffect(Unit) {
+        showContent = true
     }
 
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -51,175 +60,115 @@ fun HomeScreen(
                     )
                 )
         ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.Top
-            ) {
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(28.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 10.dp
+            AnimatedVisibility(
+                visible = showContent,
+                enter = fadeIn(animationSpec = tween(500)) +
+                    slideInVertically(
+                        animationSpec = tween(500),
+                        initialOffsetY = { it / 5 }
                     )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.Top
                 ) {
-
-                    AnimatedVisibility(
-                        visible = true,
-                        enter = fadeIn() + slideInVertically(
-                            initialOffsetY = { it / 2 }
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(28.dp),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 10.dp
                         )
                     ) {
-
                         Column(
                             modifier = Modifier.padding(24.dp)
                         ) {
-
                             TopBar()
-
                         }
-
                     }
 
-                }
-
-                Spacer(modifier = Modifier.height(28.dp))
-
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn() + slideInVertically()
-                ) {
+                    Spacer(modifier = Modifier.height(28.dp))
 
                     PrimaryButton(
                         text = "Start New Scan"
                     ) {
-
                         showDialog = true
-
                     }
 
-                }
+                    Spacer(modifier = Modifier.height(40.dp))
 
-                Spacer(modifier = Modifier.height(40.dp))
-
-                Text(
-                    text = "Recent Sessions",
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 6.dp
+                    Text(
+                        text = "Recent Sessions",
+                        style = MaterialTheme.typography.titleLarge
                     )
-                ) {
 
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                        Text(
-                            text = "📄 College Notes",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-
-                        Text(
-                            text = "Today",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                    }
-
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 6.dp
+                    SessionPreviewCard(
+                        title = "College Notes",
+                        subtitle = "Today"
                     )
-                ) {
 
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                        Text(
-                            text = "📄 Shopping List",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-
-                        Text(
-                            text = "Yesterday",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                    }
-
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 6.dp
+                    SessionPreviewCard(
+                        title = "Shopping List",
+                        subtitle = "Yesterday"
                     )
-                ) {
 
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                        Text(
-                            text = "📄 Receipts",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-
-                        Text(
-                            text = "2 Days Ago",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                    }
-
+                    SessionPreviewCard(
+                        title = "Receipts",
+                        subtitle = "2 Days Ago"
+                    )
                 }
-
             }
-
         }
-
     }
 
     if (showDialog) {
-
         SessionDialog(
-
             onDismiss = {
-
                 showDialog = false
-
             },
-
             onCreate = { sessionName ->
-
                 showDialog = false
-
                 onNewSessionClick(sessionName)
-
             }
-
         )
-
     }
+}
 
+@Composable
+private fun SessionPreviewCard(
+    title: String,
+    subtitle: String
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
 }

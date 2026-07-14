@@ -6,42 +6,45 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ayant02.ocrx.camera.CameraScreen
 import com.ayant02.ocrx.ui.home.HomeScreen
+import com.ayant02.ocrx.ui.splash.SplashScreen
 
 object Routes {
+    const val SPLASH = "splash"
     const val HOME = "home"
     const val CAMERA = "camera"
 }
 
 @Composable
 fun AppNavigation() {
-
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Routes.HOME
+        startDestination = Routes.SPLASH
     ) {
-
-        composable(Routes.HOME) {
-
-            HomeScreen(
-                onNewSessionClick = { sessionName ->
-
-                    println("Session: $sessionName")
-
-                    navController.navigate(Routes.CAMERA)
-
+        composable(Routes.SPLASH) {
+            SplashScreen(
+                onFinished = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.SPLASH) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
+        }
 
+        composable(Routes.HOME) {
+            HomeScreen(
+                onNewSessionClick = { sessionName ->
+                    println("Session: $sessionName")
+                    navController.navigate(Routes.CAMERA)
+                }
+            )
         }
 
         composable(Routes.CAMERA) {
-
             CameraScreen()
-
         }
-
     }
-
 }
